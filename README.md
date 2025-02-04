@@ -13,28 +13,35 @@
 
 要开始使用 in-out，请按照以下简单步骤操作：
 
-1. 克隆该仓库：
+克隆该仓库：
 
 ```bash
-   git clone https://github.com/HYH0309/in-out.git
+   git clone https://github.com/HYH3939/in-out.git
 ```
 
-2. 进入项目目录：
+ 进入项目目录：
 
 ```bash
    cd in-out
 ```
 
-3. 安装依赖：
+安装依赖：
 
 ```bash
    npm install
 ```
 
-4. 启动应用：
+启动应用：
 
 ```bash
    npm run dev
+```
+
+或者可以：
+
+```url
+通过网盘分享的文件：in-out.exe
+链接: https://pan.baidu.com/s/1jGnha1LwUq5W-IAXqT459w?pwd=r5vq 提取码: r5vq 
 ```
 
 ## 使用说明
