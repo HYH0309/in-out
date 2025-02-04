@@ -1,14 +1,16 @@
 <template>
     <div class="file-uploader-container">
-        <input type="file" @change="handleFileUpload" accept=".in,.out" class="file-input" />
+        <input type="file" id="fileInput" @change="handleFileUpload" accept=".in,.out" class="file-input" />
+        <label for="fileInput" class="custom-file-input">
+            选择文件
+        </label>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { defineEmits } from 'vue';
 
-const emit = defineEmits(['fileLoaded'])
-const fileContent = ref("")
+const emit = defineEmits(['fileLoaded']);
 
 const handleFileUpload = async (event: Event) => {
     const target = event.target as HTMLInputElement;
@@ -18,9 +20,7 @@ const handleFileUpload = async (event: Event) => {
         const reader = new FileReader();
 
         reader.onload = (e) => {
-            // 将文件内容传递给父组件
-            fileContent.value = e.target?.result as string;
-            emit('fileLoaded', fileContent.value);
+            emit('fileLoaded', e.target?.result as string);
         };
 
         reader.readAsText(file);
@@ -30,10 +30,22 @@ const handleFileUpload = async (event: Event) => {
 
 <style scoped>
 .file-uploader-container {
-    @apply p-4;
+    @apply p-4 flex justify-center;
+    position: relative;
+    /* 用于定位 label */
 }
 
 .file-input {
-    @apply bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none;
+    @apply absolute top-0 left-0 opacity-0 bg-black;
+    /* 隐藏文件输入框 */
+    width: 100%;
+    /* 充满父元素 */
+    height: 100%;
+    /* 充满父元素 */
+}
+
+
+.custom-file-input {
+    @apply bg-white border rounded-lg shadow-md p-2 text-gray-700 cursor-pointer hover:bg-gray-100 transition duration-200;
 }
 </style>

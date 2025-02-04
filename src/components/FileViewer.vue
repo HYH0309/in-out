@@ -6,13 +6,16 @@
             <input type="number" v-model="endLine" @input="updateSelection" placeholder="End Line" min="1"
                 :max="maxLines" class="line-input" />
             <select v-model="highlightColor" class="color-select">
-                <option v-for="color in colors" :key="color" :value="color">{{ color }}</option>
+                <option v-for="color in colors" :key="color" :value="color"
+                    :style="`background-color: ${color}; color: ${contrastColor(color)};`">{{ color }}</option>
             </select>
-            <input type="color" v-model="customColor" class="custom-color-input" @input="updateCustomColor" />
-            <button @click="applyHighlight" class="toggle-button">Apply Color</button>
+            <div class="color-preview" :style="{ backgroundColor: highlightColor }"></div>
+            <button @click="applyHighlight" class="toggle-button">Apply</button>
         </div>
+
         <div class="file-content-display">
-            <div v-for="(line, index) in lines" :key="index" :class="lineClass(index)" class="line">
+            <div v-for="(line, index) in lines" :key="index" :class="lineClass(index)" class="line"
+                :style="{ backgroundColor: toggledLines.includes(index) ? highlightColor : '' }">
                 <span class="line-number">{{ index + 1 }}</span>
                 {{ line }}
             </div>
@@ -21,54 +24,70 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, computed } from 'vue';
 
 const props = defineProps({
     content: String // 从父组件获取文件的内容
 });
 
+// 行内容初始化
 const lines = ref((props.content || '').split('\n'));
 const toggledLines = ref<number[]>([]);
-const startLine = ref<number | null>(null);
-const endLine = ref<number | null>(null);
-const maxLines = lines.value.length;
+const startLine = ref(1); // 默认起始行为1
+const endLine = ref(1); // 默认结束行为1
 const highlightColor = ref('#FFFF00'); // 默认高亮颜色为黄色
-const customColor = ref('#FFFF00'); // 用户自定义颜色
-const colors = ref(['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF']); // 预设颜色
+const colors = ref(['#FFCCCC', '#CCFFCC', '#CCCCFF', '#FFFFCC', '#FFCCFF']); // 预设颜色
 
-const lineClass = (index: number) => {
-    return {
-        customHighlight: toggledLines.value.includes(index),
-    };
-};
+// 计算最大行数
+const maxLines = computed(() => lines.value.length);
 
-// 更新行选择
+// 更新行选择边界，确保行号在有效范围内
 const updateSelection = () => {
-    // 确保行号在有效范围内
-    if (startLine.value !== null && endLine.value !== null) {
-        startLine.value = Math.max(1, Math.min(startLine.value, maxLines));
-        endLine.value = Math.max(1, Math.min(endLine.value, maxLines));
-    }
+    startLine.value = Math.max(1, Math.min(startLine.value, maxLines.value));
+    endLine.value = Math.max(1, Math.min(endLine.value, maxLines.value));
 };
 
 // 应用高亮颜色
 const applyHighlight = () => {
-    document.documentElement.style.setProperty('--highlight-color', highlightColor.value); // 设置 CSS 变量
-    if (startLine.value !== null && endLine.value !== null) {
-        const start = Math.min(startLine.value - 1, endLine.value - 1);
-        const end = Math.max(startLine.value - 1, endLine.value - 1);
+    toggleLines();
+};
 
-        for (let i = start; i <= end; i++) {
-            if (!toggledLines.value.includes(i)) {
-                toggledLines.value.push(i);
-            }
+// 切换行的高亮状态
+const toggleLines = () => {
+    const start = Math.max(0, startLine.value - 1);
+    const end = Math.min(maxLines.value - 1, endLine.value - 1);
+
+    for (let i = start; i <= end; i++) {
+        if (!toggledLines.value.includes(i)) {
+            toggledLines.value.push(i);
+        } else {
+            toggledLines.value = toggledLines.value.filter(line => line !== i); // 若重新点击则取消高亮
         }
     }
 };
 
-// 更新自定义颜色
-const updateCustomColor = () => {
-    highlightColor.value = customColor.value; // 更新 highlightColor 为自定义颜色
+// 监测 content 的变化以更新 lines
+watch(() => props.content, newContent => {
+    lines.value = (newContent || '').split('\n');
+    // Reset toggledLines after content change
+    toggledLines.value = [];
+});
+
+// 生成高亮行的 CSS 类名
+const lineClass = (index: number) => {
+    return {
+        'customHighlight': toggledLines.value.includes(index)
+    };
+};
+
+// 计算对比颜色用于增强可读性
+const contrastColor = (color: string) => {
+    const rgb = parseInt(color.slice(1), 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >> 8) & 0xff;
+    const b = (rgb >> 0) & 0xff;
+    const brightness = (r * 0.299 + g * 0.587 + b * 0.114);
+    return brightness > 186 ? '#000000' : '#FFFFFF'; // 返回黑色或白色
 };
 </script>
 
@@ -85,16 +104,17 @@ const updateCustomColor = () => {
     @apply border border-gray-300 rounded p-2 mr-2 w-24;
 }
 
-.color-select {
+.color-select,
+.color-select option {
     @apply border border-gray-300 rounded p-2 mr-2;
 }
 
-.custom-color-input {
-    @apply border border-gray-300 rounded p-2 mr-2;
+.color-preview {
+    @apply border rounded p-2 w-5 h-5 mr-10;
 }
 
 .toggle-button {
-    @apply bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600;
+    @apply bg-white-500 text-black px-4 py-2 rounded hover:bg-gray-500;
 }
 
 .file-content-display {
@@ -111,7 +131,6 @@ const updateCustomColor = () => {
 }
 
 .customHighlight {
-    background-color: var(--highlight-color);
-    /* 使用 CSS 变量设置自定义高亮颜色 */
+    /* 这个类可以知道高亮的背景，但目前我们通过内联样式来设置颜色 */
 }
 </style>
