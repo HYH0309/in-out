@@ -1,16 +1,58 @@
-# Tauri + Vue + TypeScript
+# in-out
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+欢迎来到 **in-out**！📌 这个项目是一个简单有趣的工具，允许用户查看和高亮文件中的特定文本行。无论您是在阅读文档、代码还是笔记，in-out 使您能够轻松关注最重要的内容。
 
-## Recommended IDE Setup
+## 功能
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+- **简单的行高亮**: 只需点击行即可高亮显示。
+- **简约界面**: 设计简洁直观，易于使用。
+- **文件支持**: 打开并高亮多种文件格式的文本。
+- **用户友好**: 无需复杂的设置，下载后即可开始高亮！
 
-## Type Support For `.vue` Imports in TS
+## 安装
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+要开始使用 in-out，请按照以下简单步骤操作：
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
+1. 克隆该仓库：
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+```bash
+   git clone https://github.com/HYH0309/in-out.git
+```
+
+2. 进入项目目录：
+
+```bash
+   cd in-out
+```
+
+3. 安装依赖：
+
+```bash
+   npm install
+```
+
+4. 启动应用：
+
+```bash
+   npm run dev
+```
+
+## 使用说明
+
+1. 使用文件选择器打开一个文本文件。
+2. 点击任意行以进行高亮。
+3. 使用高亮选项自定义外观。
+
+## 贡献
+
+我们欢迎对 in-out 的贡献！如果您有建议或想要帮助改进这个项目，请 fork 该仓库并提交一个 pull request。
+
+---
+
+祝您高亮愉快！🎉
+
+### 说明
+
+- 您可以根据项目的实际情况修改安装步骤、功能描述、许可证以及联系方式。
+- 如果有具体的技术栈或开发环境，也可以添加对应的说明。
+- 不要忘记更新 GitHub 地址和电子邮件，以便其他用户可以联系您或参与贡献！
